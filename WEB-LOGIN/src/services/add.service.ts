@@ -13,8 +13,8 @@ export class AddService {
 
   private basePath = environment.host + '/api/animals';
 
-  AddAnimals(name: string, race: string, size: string, color: string, yearNacido: string, year: String): Promise<any> {
-    const body = { name, race, size, color, yearNacido, year };
+  AddAnimals(name: string, race: string, size: string, color: string, yearborn: string, year: String): Promise<any> {
+    const body = { name, race, size, color, yearborn, year };
     return firstValueFrom
       (this.https.post(`${this.basePath}/create`, body));
   }

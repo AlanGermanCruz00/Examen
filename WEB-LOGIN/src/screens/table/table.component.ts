@@ -5,6 +5,7 @@ import { AddService } from 'src/services/add.service';
 import { AddAnimalsComponent } from '../add-animals/add-animals.component';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import dictionaryUtils from 'src/utils/dictionary.utils';
 
 @Component({
   selector: 'app-table',
@@ -17,6 +18,7 @@ export class TableComponent implements OnInit {
   showToast = false;
   toastMessage = '';
   toastType: 'success' | 'danger' = 'success';
+  dictionaryUtils = dictionaryUtils
 
   deleteId = new FormControl('', [Validators.required]);
 
@@ -28,22 +30,23 @@ export class TableComponent implements OnInit {
   ngOnInit(): void { }
 
   onSubmitConsultar(): void {
-    this.showBootstrapToast(`Tabla de Mascotas`, 'success')
+      this.showBootstrapToast(dictionaryUtils.messages.AnimalsShow, 'success');
     this.addService.showAnimals().then((res) => {
       this.tableData = Array.isArray(res.response) ? res.response : [res.response];
     }).catch(err => {
-      this.showBootstrapToast('Error al Consultar Tabla', 'danger')
+       this.showBootstrapToast(dictionaryUtils.messages.invalidAnimalsShow, 'danger')
     });
   }
 
 
   onSubmitDelete(id: number): void {
     console.log(id)
-    this.showBootstrapToast('Eliminacion de Mascota', 'danger')
+   this.showBootstrapToast(dictionaryUtils.messages.AnimalsDelete, 'success');
+
     this.addService.deleteAnimal(id).then((res) => {
       this.tableData = this.tableData.filter(row => row.id_animal !== id);
     }).catch(err => {
-      this.showBootstrapToast('Error al Eliminar Mascota', 'danger')
+       this.showBootstrapToast(dictionaryUtils.messages.invalidAnimalsDelete , 'danger');
     });
   }
 
@@ -53,8 +56,7 @@ export class TableComponent implements OnInit {
       animlsFrom.componentInstance.actionType = 'create';
 
     } else {
-      animlsFrom.componentInstance.actionType = 'update';
-      console.log("Id A Actualizar: ", row?.id_animal);
+      animlsFrom.componentInstance.actionType = 'update'; // console.log("Id A Actualizar: ", row?.id_animal);
       animlsFrom.componentInstance.animalId = row.id_animal;
       animlsFrom.componentInstance.AnimalsForm.patchValue(row);
     }
@@ -62,10 +64,10 @@ export class TableComponent implements OnInit {
     animlsFrom.result.then((res) => {
       if (res?.success) {
         this.onSubmitConsultar();
-        this.showBootstrapToast('Mascota Feliz', 'success')
+         this.showBootstrapToast(dictionaryUtils.messages.AnimalsAdd , 'success');
       } else if (res?.updated) {
         this.onSubmitConsultar();
-        this.showBootstrapToast('Mascota Actualizada', 'success')
+        this.showBootstrapToast(dictionaryUtils.messages.AnimalsUpdate, 'success')
       }
     });
 
@@ -75,9 +77,10 @@ export class TableComponent implements OnInit {
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
   }
-
-
 
 
 }

@@ -7,33 +7,32 @@ const utils = new Utils()
 class ControllerAnimal {
 
   public async showAnimals(req: Request, res: Response) {
-    const description = "animals[show]";
+    const descriptionS = "animals[show]";
     try {
       const rows: any = await dataBaseService.pool?.query(`
-              SELECT id_animal, name, race, size, color, yearNacido, year, create_at FROM tbl_animals `);
-      res.json(utils.response(description, rows, false));
+              SELECT id_animal, name, race, size, color, yearborn, year, create_at FROM tbl_animals `);
+      res.json(utils.response(descriptionS, rows, false));
     } catch (err) {
-      console.error("Error");
-      res.status(500).json(utils.response(description, err, true));
+      res.status(500).json(utils.response(descriptionS, err, true));
     }
   }
 
 
   public async AddAnimals(req: Request, res: Response) {
-    const desciption = "animals[create]"
-    const { name, race, size, color, yearNacido, year } = req.body;
+    const descriptionC = "animals[create]"
+    const { name, race, size, color, yearborn, year } = req.body;
 
-    dataBaseService.pool?.query("CALL stp_A_animal(?,?,?,?,?,?)", [name, race, size, color, yearNacido, year]).then((Anims) => {
-
+    dataBaseService.pool?.query("CALL stp_S_animal(?,?,?,?,?,?)", [name, race, size, color, yearborn, year]).then((Anims) => {
       const idAnimls = Anims[0][0].id
-      console.log(idAnimls)
-      res.json(utils.response(desciption, idAnimls, false))
+      res.json(utils.response(descriptionC, idAnimls, false))
 
-    }).catch((err) => { })
+    }).catch((err) => { 
+       res.status(500).json(utils.response(descriptionC, err, true));
+    })
   }
 
   public async deleteAnimals(req: Request, res: Response) {
-    const description = "animal[delete]";
+    const descriptionD = "animal[delete]";
     const { id } = req.params;
 
     try {
@@ -41,27 +40,27 @@ class ControllerAnimal {
         "DELETE FROM tbl_animals WHERE id_animal = ?", [id]
 
       );
-      console.log("COOORERERER");
-      res.json(utils.response(description, id, false));
+
+      res.json(utils.response(descriptionD, id, false));
     } catch (err) {
-      console.error("Error", err);
+      res.status(500).json(utils.response(descriptionD, err, true));
 
     }
   }
 
   public async updateAnimals(req: Request, res: Response) {
+    const descriptionU = "animal[update]";
     const { id } = req.params;
-    const { name, race, size, color, yearNacido, year } = req.body;
+    const { name, race, size, color, yearborn, year } = req.body;
     try {
       const result: any = await dataBaseService.pool?.query(
         `UPDATE tbl_animals 
-       SET name = ?, race = ?, size = ?, color = ?, yearNacido = ?,  \`year\` = ?, create_at = NOW() 
+       SET name = ?, race = ?, size = ?, color = ?, yearborn = ?,  \`year\` = ?, create_at = NOW() 
        WHERE id_animal = ?`,
-        [name, race, size, color, yearNacido, year, id]             //PORQUE YEAR '' 
+        [name, race, size, color, yearborn, year, id]             //PORQUE YEAR '' 
       );
-      console.log("Actualizado ", id)
-    } catch (error) {
-      console.log("Id no encontrado")
+    } catch (err) {
+       res.status(500).json(utils.response(descriptionU, err, true));
     }
   }
 

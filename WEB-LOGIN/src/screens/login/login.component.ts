@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-
 import { SinginService } from 'src/services/singin.service';
+import dictionaryUtils from 'src/utils/dictionary.utils';
 
 @Component({
   selector: 'app-login',
@@ -32,23 +32,21 @@ export class LoginComponent {
 
   onSubmitl(): void {
     this.ainginService.singIn(this.emailFormControl.value!, this.passwordFormControl.value!).then((res: any) => {
-      console.log("DATOS ----", res);
       const emailValue = this.emailFormControl.value!;
       const passwordValue = this.passwordFormControl.value!;
-
       if (res && res.response && res.response.length > 0) {
         const user = res.response[0];
         if (user.email === emailValue) {
           this.router.navigate(['/animals/table']);
         }
         else if (user.email === emailValue && user.password !== passwordValue) {
-          this.showBootstrapToast('Contraseña Incorrecta', 'danger')
+          this.showBootstrapToast(dictionaryUtils.messages.invalidPassword, 'danger')
         }
       } else {
-        this.showBootstrapToast('Usuario no encontrado', 'danger');
+        this.showBootstrapToast(dictionaryUtils.messages.invalidUser, 'danger');
       }
     }).catch((err) => {
-      this.showBootstrapToast('Error de Servidor', 'danger');
+      this.showBootstrapToast(dictionaryUtils.messages.invalidServe, 'danger');
     });
 
   }
@@ -57,8 +55,11 @@ export class LoginComponent {
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
   }
-  
+
   PasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
   }

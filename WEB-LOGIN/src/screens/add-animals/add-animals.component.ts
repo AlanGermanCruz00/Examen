@@ -4,7 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AddService } from 'src/services/add.service';
 import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
+import dictionaryUtils from 'src/utils/dictionary.utils';
 
 
 
@@ -16,7 +16,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class AddAnimalsComponent {
   actionType: any;
   animalId!: number;
-
+  dictionaryUtils = dictionaryUtils
 
   constructor(private addService: AddService,
     private router: Router,
@@ -37,7 +37,7 @@ export class AddAnimalsComponent {
   raceFormControl = new FormControl('', [Validators.required])
   sizeFormControl = new FormControl('', [Validators.required])
   colorFormControl = new FormControl('', [Validators.required])
-  yearNacidoFormControl = new FormControl('', [Validators.required])
+  yearbornFormControl = new FormControl('', [Validators.required])
   yearFormControl = new FormControl('', [Validators.required])
 
 
@@ -46,7 +46,7 @@ export class AddAnimalsComponent {
     race: this.raceFormControl,
     size: this.sizeFormControl,
     color: this.colorFormControl,
-    yearNacido: this.yearNacidoFormControl,
+    yearborn: this.yearbornFormControl,
     year: this.yearFormControl
 
   })
@@ -59,19 +59,19 @@ export class AddAnimalsComponent {
 
     if (this.AnimalsForm.valid) {
       this.addService.AddAnimals(this.nameFormControl.value!, this.raceFormControl.value!, this.sizeFormControl.value!,
-        this.colorFormControl.value!, this.yearNacidoFormControl.value!, this.yearFormControl.value!).then((res: any) => {
+        this.colorFormControl.value!, this.yearbornFormControl.value!, this.yearFormControl.value!).then((res: any) => {
           this.activeModal.close({ success: true, id: res.response }); //
           this.activeModal.close({ id: res.response });
         }).catch(() => { });
     } else {
-      this.showBootstrapToast('Formulario Incompleto', 'danger')
+      this.showBootstrapToast(dictionaryUtils.messages.invalidFrom, 'danger')
     }
 
   }
   // this.router.navigate(['/animals/table']);
   onSubmitVolver() { this.activeModal.close(); }
 
-  async onSubmitActualizar(): Promise<void> {
+  onSubmitActualizar() {
     if (this.AnimalsForm.valid) {
       const update = this.AnimalsForm.value;
       this.addService.updateAnimals(this.animalId, update).then(res => {
@@ -79,7 +79,7 @@ export class AddAnimalsComponent {
         this.activeModal.close({ updated: false, error: true });
       });
     } else {
-      this.showBootstrapToast('Formulario Incompleto', 'danger')
+      this.showBootstrapToast(dictionaryUtils.messages.invalidFrom, 'danger')
     }
     const payload = { updated: true, id: this.animalId };
     this.activeModal.close(payload);
@@ -90,8 +90,10 @@ export class AddAnimalsComponent {
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
   }
-
   allLetters(event: KeyboardEvent) {
     const pattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]$/;
     const inputChar = event.key;

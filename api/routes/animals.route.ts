@@ -10,8 +10,8 @@ class AnimalsRoutes {
     
         this.router.get('/getAll', [], Controlleranimal.showAnimals);
         this.router.post('/create', [], Controlleranimal.AddAnimals);
-          this.router.delete('/delete/:id', [], Controlleranimal.deleteAnimals);
-           this.router.put('/update/:id', [], Controlleranimal.updateAnimals);
+        this.router.delete('/delete/:id', [], Controlleranimal.deleteAnimals);
+        this.router.put('/update/:id', [], Controlleranimal.updateAnimals);
 
 
     }
